@@ -110,10 +110,59 @@ let _insert = (arr, gap, i) => {
     arr[j + gap] = inserted;
 };
 
-let arr = [2, 2, 5, 888, 54, 11, 3, 767, 8, 163];
-console.log('原数组：',arr);
+/**
+ * 归并排序
+ *
+ * @param {Array} arr 传入一个数组,按照从小到大排序
+ * @returns {Array} 返回排序后的数组
+ */
+let mergeSort = (arr) => {
+    let len = arr.length;
+    if (len < 2) {
+        return arr;
+    }
+    let middle = Math.floor(len / 2),
+        left = arr.slice(0, middle),
+        right = arr.slice(middle);
 
-console.log('冒泡排序',bubbleSort(arr));
-console.log('选择排序',selectionSort(arr));
-console.log('插入排序',insertionSort(arr));
-console.log('希尔排序',shellSort(arr));
+    return _merge(mergeSort(left), mergeSort(right));
+};
+
+/**
+ * 合并（归并）两个数组
+ * @param left
+ * @param right
+ * @returns {[]}
+ * @private
+ */
+let _merge = (left, right) => {
+    //合并空间
+    let result = [];
+    while (left.length && right.length) {
+        if (left[0] <= right[0]) {
+            //移除left的第一个元素，并且添加到合并空间中
+            result.push(left.shift());
+        }else{
+            //移除right到第一个元素，并且添加到合并空间中
+            result.push(right.shift());
+        }
+    }
+    //假如左数组还有剩余，则把左数组增加到合并空间中
+    while (left.length){
+        result.push(left.shift());
+    }
+    //假如右数组还有剩余，则把右数组增加到合并空间中
+    while (right.length){
+        result.push(right.shift());
+    }
+    return result;
+};
+
+let arr = [2, 2, 5, 888, 54, 11, 3, 767, 8, 163];
+console.log('原数组：', arr);
+
+console.log('冒泡排序', bubbleSort(arr));
+console.log('选择排序', selectionSort(arr));
+console.log('插入排序', insertionSort(arr));
+console.log('希尔排序', shellSort(arr));
+console.log('归并排序', mergeSort(arr));

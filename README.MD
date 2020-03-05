@@ -290,11 +290,101 @@ let _insert = (arr, gap, i) => {
 #### 稳定性：不稳定
 &emsp;&emsp;由于多次插入排序，我们知道一次插入排序是稳定的，不会改变相同元素的相对顺序，但在不同的插入排序过程中，相同的元素可能在各自的插入排序中移动，最后其稳定性就会被打乱，所以shell排序是不稳定的。
 
+### 归并排序
+&emsp;&emsp;归并排序是建立在归并操作上的一种有效的排序算法，是分治法的一个经典应用。
+
+&emsp;&emsp;所谓**分治**，将问题分(divide)成一些小的问题然后递归求解，而治(conquer)的阶段则将分的阶段得到的各答案"修补"在一起，即分而治之。
+
+![分治法](https://images2015.cnblogs.com/blog/1024555/201612/1024555-20161218163120151-452283750.png)
+
+#### 思路
+1. 申请空间，使其为两个已经排序序列之和，该空间用来存放合并后的序列；
+2. 设定两个指针，最初位置分别为两个已经排序的序列的起始位置；
+3. 比较两个指针所指向的元素，选择相对较小的放到合并空间，并移动指针到下一位置；
+4. 重复3步骤直到某一指针达到序列尾；
+5. 将另一序列剩下的元素直接复制到合并序列尾；
+#### 动画演示
+
+![归并排序](https://www.runoob.com/wp-content/uploads/2019/03/mergeSort.gif)
+
+![归并排序2](https://upload-images.jianshu.io/upload_images/17652162-e4f9b3ae3542b599.gif?imageMogr2/auto-orient/strip|imageView2/2/w/300/format/webp)
+
+#### 代码实现
+```javascript
+/**
+ * 归并排序
+ *
+ * @param {Array} arr 传入一个数组,按照从小到大排序
+ * @returns {Array} 返回排序后的数组
+ */
+let mergeSort = (arr) => {
+    let len = arr.length;
+    if (len < 2) {
+        return arr;
+    }
+    let middle = Math.floor(len / 2),
+        left = arr.slice(0, middle),
+        right = arr.slice(middle);
+
+    return _merge(mergeSort(left), mergeSort(right));
+};
+
+/**
+ * 合并（归并）两个数组
+ * @param left
+ * @param right
+ * @returns {[]}
+ * @private
+ */
+let _merge = (left, right) => {
+    //合并空间
+    let result = [];
+    while (left.length && right.length) {
+        if (left[0] <= right[0]) {
+            //移除left的第一个元素，并且添加到合并空间中
+            result.push(left.shift());
+        }else{
+            //移除right到第一个元素，并且添加到合并空间中
+            result.push(right.shift());
+        }
+    }
+    //假如左数组还有剩余，则把左数组增加到合并空间中
+    while (left.length){
+        result.push(left.shift());
+    }
+    //假如右数组还有剩余，则把右数组增加到合并空间中
+    while (right.length){
+        result.push(right.shift());
+    }
+    return result;
+};
+```
+#### 时间复杂度O(nlogn)
+&emsp;&emsp;归并的时间复杂度分析：主要是考虑两个函数的时间花销，一、数组划分函数mergeSort()；二、有序数组归并函数_merge()；
+
+&emsp;&emsp;简单的分析下元素长度为n的归并排序所消耗的时间 T[n]：调用mergeSort()函数划分两部分，那每一小部分排序好所花时间则为T[n/2]，而最后把这两部分有序的数组合并成一个有序的数组_merge()函数所花的时间为  O(n)；
+
+&emsp;&emsp;公式：`T[n]  =  2T[n/2] + O(n)`
+
+&emsp;&emsp;公式就不仔细推导了，可以[参考链接](http://blog.csdn.net/yuzhihui_no1/article/details/44198701#t2)
+
+&emsp;&emsp;所以得出的结果为：`T[n] = O( nlogn )`
+
+&emsp;&emsp;从另一个角度思考，假设解决最后的子问题用时为常数c，则对于n个待排序记录来说整个问题的规模为cn。
+
+![归并排序复杂度](https://img-blog.csdn.net/20170909101802866?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc2luYXRfMzYzMDY0NzQ=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+
+&emsp;&emsp;从这个递归树可以看出，第一层时间代价为cn，第二层时间代价为cn/2+cn/2=cn…..每一层代价都是cn，总共有logn层。所以总的时间代价为cn*(logn).时间复杂度是O(nlogn)。
+
+
+#### 稳定性：稳定
+&emsp;&emsp;归并排序是稳定的排序.即相等的元素的顺序不会改变。即是原数组有相等数字，在排序成新数组后，也会保持着之前到相等数字的前后位置。
+
+
 ---
 **更新中ing**
 
 
-### 归并排序
 ### 快速排序
 ### 堆排序
 ### 计数排序
